@@ -30,9 +30,22 @@ The DSH plugin market is a **JSON index** (format 1), not an app-store upload: h
    ```
    With a git checkout, `commit`, `publishTimestamp` and the URL default to `HEAD`, the commit date and the `origin` remote; `--commit`, `--timestamp` and `--path` (package subdirectory) override them.
    For npm, use `--npm --registry https://registry.npmjs.org` — that also requires actually publishing the package and renaming `name` to your own scope.
-3. Upload the resulting `market/index.json` to any HTTPS static host (GitHub Pages, object storage, your own domain).
+3. Upload the resulting index to any HTTPS static host (GitHub Pages, object storage, your own domain). This repository already serves one:
+
+   ```
+   https://mbcc5732.github.io/dsh-screenshot/index.json
+   ```
+
 4. Add that URL as an index source in the plugin market. Installs use a pinned spec like
-   `git+https://github.com/<you>/dsh-screenshot.git#<40-hex-commit>`.
+   `git+https://github.com/mbcc5732/dsh-screenshot.git#<40-hex-commit>`.
+
+Republishing after a code change: commit, push, then rebuild `docs/index.json` from the new HEAD and push it again.
+
+```
+git add . && git commit -m "..." && git push
+node market/build-index.mjs --out docs/index.json
+git add docs/index.json && git commit -m "index: rebuild" && git push
+```
 
 `market/example.index.json` is the sample produced from an example repository; its shape passes DSH's own validator (`parseMarketIndex` from `@deepseek-ai/dsh-plugin-market-index`).
 

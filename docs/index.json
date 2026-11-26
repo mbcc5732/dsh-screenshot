@@ -1,0 +1,80 @@
+{
+  "format": 1,
+  "title": {
+    "en": "Local DSH plugins",
+    "zh": "本地 DSH 插件"
+  },
+  "description": {
+    "en": "Bundles published from this workspace. Add this index URL in the plugin market to list them.",
+    "zh": "从本工作区发布的组合包。在插件市场里添加本索引地址即可看到。"
+  },
+  "metadata": {
+    "categories": {
+      "tools": {
+        "title": {
+          "en": "Tools",
+          "zh": "工具"
+        }
+      }
+    },
+    "labels": {
+      "windows": {
+        "title": {
+          "en": "Windows only",
+          "zh": "仅 Windows"
+        }
+      },
+      "screenshot": {
+        "title": {
+          "en": "Screenshot",
+          "zh": "截屏"
+        }
+      }
+    },
+    "sortKeys": {}
+  },
+  "plugins": [
+    {
+      "name": "@local/dsh-screenshot",
+      "title": {
+        "en": "Screenshot to chat",
+        "zh": "对话截屏"
+      },
+      "description": {
+        "en": "Adds a Screenshot button to the composer: drag a region (Doubao-style chrome), adjust it, and the PNG lands in the draft as an attachment. Windows only.",
+        "zh": "在输入框工具栏加一个截屏按钮：拖出选区（豆包同款界面）、可微调，确认后 PNG 作为附件插入当前草稿。仅 Windows。"
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNiAzNiIgd2lkdGg9IjM2IiBoZWlnaHQ9IjM2Ij4KICA8cGF0aCBkPSJNNiAxMWg2bDItM2g4bDIgM2g2djE4SDZ6IiBmaWxsPSJub25lIiBzdHJva2U9IiMzYjdkZDgiIHN0cm9rZS13aWR0aD0iMi40IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPGNpcmNsZSBjeD0iMTgiIGN5PSIyMCIgcj0iNS4yIiBmaWxsPSJub25lIiBzdHJva2U9IiMzYjdkZDgiIHN0cm9rZS13aWR0aD0iMi40Ii8+CiAgPGNpcmNsZSBjeD0iMTgiIGN5PSIyMCIgcj0iMS42IiBmaWxsPSIjM2I3ZGQ4Ii8+Cjwvc3ZnPgo=",
+      "author": "34394",
+      "repository": {
+        "url": "https://github.com/mbcc5732/dsh-screenshot"
+      },
+      "metadata": {
+        "category": "tools",
+        "keywords": [
+          "dsh",
+          "plugin",
+          "screenshot",
+          "capture",
+          "windows"
+        ],
+        "labels": [
+          "windows",
+          "screenshot"
+        ],
+        "sortKeys": {}
+      },
+      "versions": [
+        {
+          "version": "1.0.0",
+          "publishTimestamp": 1795684799,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/mbcc5732/dsh-screenshot",
+            "commit": "8faaae11ede41c788d2edf74a08fe52eb7a081e0"
+          }
+        }
+      ]
+    }
+  ]
+}

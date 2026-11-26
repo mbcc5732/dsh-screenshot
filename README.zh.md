@@ -30,9 +30,22 @@ DSH 的插件市场是一份 **索引 JSON**（format 1），不是应用商店�
    ```
    有 git 检出时 `commit`、`publishTimestamp`、`origin` 都会自动读取；也可显式传 `--commit` / `--timestamp` / `--path`（子目录）。
    npm 源用 `--npm --registry https://registry.npmjs.org`（需要先把包真的发到 npm，且把 `name` 改成你自己的 scope）。
-3. 得到的 `market/index.json` 传到任意 HTTPS 静态地址（GitHub Pages、对象存储、自己域名都行）。
+3. `market/index.json`（或 `docs/index.json`）传到任意 HTTPS 静态地址（GitHub Pages、对象存储、自己域名都行）。本仓库的索引已经托管好：
+
+   ```
+   https://mbcc5732.github.io/dsh-screenshot/index.json
+   ```
+
 4. 在 DSH 插件市场里添加这个 URL 作为索引源，条目即可安装，安装 spec 形如
-   `git+https://github.com/<you>/dsh-screenshot.git#<40位commit>`。
+   `git+https://github.com/mbcc5732/dsh-screenshot.git#<40位commit>`。
+
+重新发布（改了代码之后）：提交推送，然后用当前 HEAD 重新生成 `docs/index.json` 再推一次。
+
+```
+git add . && git commit -m "..." && git push
+node market/build-index.mjs --out docs/index.json
+git add docs/index.json && git commit -m "index: rebuild" && git push
+```
 
 `market/example.index.json` 是用示例仓库生成的样例，结构可通过 DSH 自带校验器（`@deepseek-ai/dsh-plugin-market-index` 的 `parseMarketIndex`）。
 
