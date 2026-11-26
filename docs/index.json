@@ -70,11 +70,11 @@
       "versions": [
         {
           "version": "1.0.0",
-          "publishTimestamp": 1795694983,
+          "publishTimestamp": 1795695422,
           "source": {
             "type": "git",
             "url": "https://github.com/mbcc5732/dsh-screenshot",
-            "commit": "9ace1ce678c6e127627b6e60bd3b5950a687e716"
+            "commit": "3382b8a9c09e364477a29096ca8287e3b449e075"
           }
         }
       ]
