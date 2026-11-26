@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process'
-import { readFile, mkdir, unlink } from 'node:fs/promises'
+import { appendFile, readFile, mkdir, unlink } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { basename, dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -7,6 +7,10 @@ import { fileURLToPath } from 'node:url'
 const HERE = dirname(fileURLToPath(import.meta.url))
 const CAPTURE_SCRIPT = join(HERE, 'capture.ps1')
 const CAPTURE_ROUTE = '/api/dsh-screenshot/capture'
+// The browser half reports its registration outcome here; the plugin has no
+// visible error surface, and a silent failure looks exactly like "no rows".
+const DIAG_ROUTE = '/api/dsh-screenshot/diag'
+const DIAG_FILE = join(tmpdir(), 'dsh-screenshot-client.log')
 const OUT_DIR = join(tmpdir(), 'dsh-screenshot-tool')
 
 // The overlay is a Windows PowerShell WinForms window (per-monitor DPI aware
@@ -276,6 +280,16 @@ async function handleCapture() {
   }
 }
 
+/** Append one browser-side diagnostic line; never fails the caller. */
+async function handleDiag(request) {
+  try {
+    const body = await request.text()
+    await mkdir(tmpdir(), { recursive: true })
+    await appendFile(DIAG_FILE, `${new Date().toISOString()} ${body}\n`, 'utf8')
+  } catch { }
+  return Response.json({ ok: true })
+}
+
 /**
  * Host half: registers the capture endpoint on the Connection fetch registry
  * (the authenticated /api channel), declaring POST explicitly.
@@ -295,6 +309,13 @@ export function apply(ctx) {
     fetch: handleCapture,
   })
 
+  const disposeDiag = connection.fetch.register({
+    path: DIAG_ROUTE,
+    methods: ['POST'],
+    requestBody: 'buffered',
+    fetch: handleDiag,
+  })
+
   // Preheat one helper at load so the first click does not pay the process start.
   // It costs one idle powershell process; every later click lands in ~200ms.
   if (SUPPORTED) {
@@ -308,5 +329,6 @@ export function apply(ctx) {
   ctx.effect(() => () => {
     stopHelper()
     dispose()
+    disposeDiag()
   })
 }

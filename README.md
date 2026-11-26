@@ -1,6 +1,6 @@
 # DSH Screenshot
 
-Adds a **Screenshot** button to the conversation composer. Click it, drag a region (the chrome mirrors Doubao's capture tool), confirm, and the PNG lands in the draft as an image attachment.
+The capture entry has two possible homes: a camera button in the composer tool row, and a **Screenshot** row in the composer `+` menu (the Doubao arrangement). Either one drags a region (the chrome mirrors Doubao's capture tool), confirms, and the PNG lands in the draft as an image attachment. Both places ship enabled; the **Screenshot entry** row in that same menu switches between menu only, button only, or both.
 
 **Windows only.** The overlay is a Windows PowerShell + WinForms window; other platforms are refused explicitly (HTTP 501) instead of failing silently.
 
@@ -8,11 +8,19 @@ Adds a **Screenshot** button to the conversation composer. Click it, drag a regi
 
 ## Usage
 
-1. Click **Screenshot** in the composer tool row.
+1. Pick **Screenshot** in the `+` menu (or the camera button, depending on where you put the entry).
 2. Drag a region; a single click on a window picks that window, with a dashed hover preview.
 3. The selection stays editable: drag inside it to move, drag the eight white round handles to resize.
 4. Confirm with `Enter`, a double-click inside the selection, or the **Insert into chat** pill. **Copy** only fills the clipboard (label flashes 已复制) without closing. **Cancel** / `Esc` discards.
 5. The image appears in the composer; type your question and send.
+
+### Where the entry lives
+
+The `+` menu carries a **Screenshot entry** row with three options; a pick applies immediately and is remembered in browser localStorage across restarts:
+
+- **Both places** (default) — button plus menu row.
+- **`+` menu only** — the button retracts, leaving one menu row, exactly like Doubao (it sits at the end of the 指令 group, so a short window may need a small scroll).
+- **Toolbar button only** — just the camera button left of the composer.
 
 Chrome: everything outside the selection is dimmed by half while the region keeps its brightness; a dark dashed outline, eight white round handles, a white rounded size chip outside the top-left corner, and a white rounded action bar under the selection holding three identical items (Copy / Cancel / Insert into chat). No toasts.
 
