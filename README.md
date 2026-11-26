@@ -14,7 +14,7 @@ Adds a **Screenshot** button to the conversation composer. Click it, drag a regi
 4. Confirm with `Enter`, a double-click inside the selection, or the **Insert into chat** pill. **Copy** only fills the clipboard (label flashes 已复制) without closing. **Cancel** / `Esc` discards.
 5. The image appears in the composer; type your question and send.
 
-Chrome: thin dark dashed outline, eight white round handles, a white rounded size chip outside the top-left corner, a white rounded action bar under the selection with a gradient primary pill. The desktop is not dimmed and no toasts are shown.
+Chrome: everything outside the selection is dimmed by half while the region keeps its brightness; a dark dashed outline, eight white round handles, a white rounded size chip outside the top-left corner, and a white rounded action bar under the selection holding three identical items (Copy / Cancel / Insert into chat). No toasts.
 
 ## Install
 

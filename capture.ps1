@@ -77,18 +77,29 @@ $script:labelInsert = '插入对话'
 $script:chipFont = New-Object System.Drawing.Font('Microsoft YaHei UI', 15, [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Pixel)
 $script:labelFont = New-Object System.Drawing.Font('Microsoft YaHei UI', 14, [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Pixel)
 
+# Chrome is authored in logical pixels and painted in physical ones: the desktop
+# here is physical-pixel space, so every size below runs through S() using the
+# display scale measured when the overlay opens (150% -> 1.5).
+$script:scale = 1.0
+function S {
+  param([double]$v)
+  return [int][Math]::Round($v * $script:scale)
+}
+
 # Palette: near-black ink on white cards, hairline #E5E6EB boundaries.
 $script:inkColor = [System.Drawing.Color]::FromArgb(255, 31, 35, 41)
 $script:inkBrush = New-Object System.Drawing.SolidBrush($script:inkColor)
 $script:whiteBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::White)
 $script:shadowBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(30, 0, 0, 0))
 $script:hoverBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(255, 242, 243, 245))
+# The unselected desktop is knocked back by half, the way the Doubao tool does.
+$script:dimBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(128, 0, 0, 0))
 $script:chipBorderPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 229, 230, 235), 1)
 $script:dividerPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 221, 224, 230), 1)
 $script:iconPen = New-Object System.Drawing.Pen($script:inkColor, 1.4)
 
-# Selection outline: thin dark dashes around the region. The frame behind it is
-# blitted untouched - the Doubao overlay does not dim the desktop.
+# Selection outline: dark dashes around the region, the rest of the desktop
+# dimmed underneath.
 $script:accentPen = New-Object System.Drawing.Pen($script:inkColor, 1)
 $script:accentPen.DashStyle = [System.Drawing.Drawing2D.DashStyle]::Dash
 $script:accentPen.DashPattern = @([single]4, [single]3)
@@ -96,6 +107,23 @@ $script:accentPen.DashPattern = @([single]4, [single]3)
 # Round handles: white fill, hairline outline.
 $script:handleBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::White)
 $script:handlePen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 68, 72, 80), 1)
+
+# Re-derive every scaled resource for the display the overlay landed on.
+function Set-UiScale {
+  param([double]$factor)
+  if ($factor -lt 1) { $factor = 1 }
+  $script:scale = $factor
+  if ($null -ne $script:chipFont) { try { $script:chipFont.Dispose() } catch { } }
+  if ($null -ne $script:labelFont) { try { $script:labelFont.Dispose() } catch { } }
+  $script:chipFont = New-Object System.Drawing.Font('Microsoft YaHei UI', ([single](15 * $factor)), [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Pixel)
+  $script:labelFont = New-Object System.Drawing.Font('Microsoft YaHei UI', ([single](14 * $factor)), [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Pixel)
+  $script:accentPen.Width = [single][Math]::Max(1, [Math]::Round(1.4 * $factor))
+  $script:accentPen.DashPattern = @([single]2.5, [single]2.5)
+  $script:iconPen.Width = [single](1.4 * $factor)
+  $script:handlePen.Width = [single][Math]::Max(1, [Math]::Round(0.7 * $factor))
+  $script:chipBorderPen.Width = 1
+  $script:dividerPen.Width = 1
+}
 
 $script:centerFormat = New-Object System.Drawing.StringFormat
 $script:centerFormat.Alignment = [System.Drawing.StringAlignment]::Center
@@ -247,7 +275,7 @@ function Get-HandleAt {
   $l = $sel.X; $t = $sel.Y
   $r = $sel.X + $sel.Width; $b = $sel.Y + $sel.Height
   $mx = $l + [int]($sel.Width / 2); $my = $t + [int]($sel.Height / 2)
-  $d = 7
+  $d = S 6
   if ([Math]::Abs($px - $l) -le $d -and [Math]::Abs($py - $t) -le $d) { return 'nw' }
   if ([Math]::Abs($px - $r) -le $d -and [Math]::Abs($py - $t) -le $d) { return 'ne' }
   if ([Math]::Abs($px - $l) -le $d -and [Math]::Abs($py - $b) -le $d) { return 'sw' }
@@ -263,12 +291,12 @@ function Get-HandleAt {
 # the selection, left aligned with it - [复制] [取消] | [插入对话].
 function Get-ToolbarLayout {
   param($r)
-  $barH = 38
-  $padOuter = 8
-  $padItem = 12
-  $iconSize = 16
-  $iconGap = 6
-  $divPad = 9
+  $barH = S 42
+  $padOuter = S 8
+  $padItem = S 12
+  $iconSize = S 14
+  $iconGap = S 6
+  $divPad = S 10
 
   $mg = $script:measureG
   $twCopy = [int][Math]::Ceiling($mg.MeasureString($script:labelCopy, $script:labelFont).Width)
@@ -282,18 +310,20 @@ function Get-ToolbarLayout {
 
   $barW = $padOuter * 2 + $wCopy + $wCancel + $wDiv + $wInsert
   $x = $r.X
-  if (($x + $barW) -gt ($script:vs.Width - 4)) { $x = $script:vs.Width - 4 - $barW }
-  if ($x -lt 4) { $x = 4 }
-  $y = $r.Y + $r.Height + 8
-  if (($y + $barH) -gt ($script:vs.Height - 4)) { $y = $r.Y - $barH - 8 }
-  if ($y -lt 4) { $y = 4 }
+  $gap = S 11
+  $margin = S 4
+  if (($x + $barW) -gt ($script:vs.Width - $margin)) { $x = $script:vs.Width - $margin - $barW }
+  if ($x -lt $margin) { $x = $margin }
+  $y = $r.Y + $r.Height + $gap
+  if (($y + $barH) -gt ($script:vs.Height - $margin)) { $y = $r.Y - $barH - $gap }
+  if ($y -lt $margin) { $y = $margin }
 
   $cx = $x + $padOuter
   $copy = New-Object System.Drawing.Rectangle($cx, $y, $wCopy, $barH)
   $cx += $wCopy
   $cancel = New-Object System.Drawing.Rectangle($cx, $y, $wCancel, $barH)
   $cx += $wCancel + $divPad
-  $divider = New-Object System.Drawing.Rectangle($cx, ($y + 10), 1, ($barH - 20))
+  $divider = New-Object System.Drawing.Rectangle($cx, ($y + (S 12)), 1, ($barH - (S 24)))
   $cx += 1 + $divPad
   $insert = New-Object System.Drawing.Rectangle($cx, $y, $wInsert, $barH)
 
@@ -359,8 +389,8 @@ function Fill-RoundedRect {
 # toolbar so both read as the same surface family.
 function Draw-Card {
   param($gg, $rect, [single]$radius)
-  $sh = New-Object System.Drawing.Rectangle(($rect.X - 2), ($rect.Y + 1), ($rect.Width + 4), ($rect.Height + 5))
-  Fill-RoundedRect $gg $sh ($radius + 2) $script:shadowBrush
+  $sh = New-Object System.Drawing.Rectangle(($rect.X - (S 2)), ($rect.Y + (S 1)), ($rect.Width + (S 4)), ($rect.Height + (S 5)))
+  Fill-RoundedRect $gg $sh ($radius + (S 2)) $script:shadowBrush
   Fill-RoundedRect $gg $rect $radius $script:whiteBrush
   $path = Get-RoundRectPath $rect $radius
   try { $gg.DrawPath($script:chipBorderPen, $path) } finally { $path.Dispose() }
@@ -397,8 +427,8 @@ function Draw-IconX {
 # Icon plus label, centred as one group inside the item rect.
 function Draw-ItemContent {
   param($gg, $rect, [string]$label, [string]$icon, $pen, $brush, $font)
-  $iconSize = 16
-  $iconGap = 6
+  $iconSize = S 14
+  $iconGap = S 6
   $ts = $gg.MeasureString($label, $font)
   $total = $iconSize + $iconGap + $ts.Width
   $ix = [single]($rect.X + ($rect.Width - $total) / 2)
@@ -415,19 +445,21 @@ function Draw-SizeChip {
   param($gg, $r)
   $label = ('{0} * {1}' -f $r.Width, $r.Height)
   $ts = $gg.MeasureString($label, $script:chipFont)
-  $padX = 9; $padY = 5
+  $padX = S 10; $padY = S 6
   $w = [int][Math]::Ceiling($ts.Width + $padX * 2)
   $h = [int][Math]::Ceiling($ts.Height + $padY * 2)
   $x = $r.X
-  $y = $r.Y - $h - 6
+  $offset = S 5
+  $margin = S 4
+  $y = $r.Y - $h - $offset
   # Flip inside the selection when the region is flush with the top edge, then
   # clamp again: a maximised window reports a small negative Y.
-  if ($y -lt 4) { $y = $r.Y + 6 }
-  if ($y -lt 4) { $y = 4 }
-  if (($x + $w) -gt ($script:vs.Width - 4)) { $x = $script:vs.Width - 4 - $w }
-  if ($x -lt 4) { $x = 4 }
+  if ($y -lt $margin) { $y = $r.Y + $offset }
+  if ($y -lt $margin) { $y = $margin }
+  if (($x + $w) -gt ($script:vs.Width - $margin)) { $x = $script:vs.Width - $margin - $w }
+  if ($x -lt $margin) { $x = $margin }
   $rect = New-Object System.Drawing.Rectangle($x, $y, $w, $h)
-  Draw-Card $gg $rect 8
+  Draw-Card $gg $rect (S 8)
   $tf = New-Object System.Drawing.RectangleF(($x + $padX), ($y + $padY), ($w - $padX * 2), ($h - $padY * 2))
   $gg.DrawString($label, $script:chipFont, $script:inkBrush, $tf, $script:centerFormat)
 }
@@ -436,7 +468,7 @@ function Draw-SizeChip {
 function Draw-Handles {
   param($gg, $r)
   $points = Get-HandlePoints $r
-  $d = 10
+  $d = S 8
   $rad = $d / 2
   foreach ($key in $points.Keys) {
     $p = $points[$key]
@@ -448,13 +480,13 @@ function Draw-Handles {
 function Draw-Toolbar {
   param($gg, $r)
   $layout = Get-ToolbarLayout $r
-  Draw-Card $gg $layout['bar'] 10
+  Draw-Card $gg $layout['bar'] (S 10)
 
   foreach ($key in @('copy', 'cancel', 'insert')) {
     if ($script:hoverButton -eq $key) {
       $it = $layout[$key]
-      $hv = New-Object System.Drawing.Rectangle(($it.X + 2), ($it.Y + 5), ($it.Width - 4), ($it.Height - 10))
-      Fill-RoundedRect $gg $hv 6 $script:hoverBrush
+      $hv = New-Object System.Drawing.Rectangle(($it.X + (S 2)), ($it.Y + (S 5)), ($it.Width - (S 4)), ($it.Height - (S 10)))
+      Fill-RoundedRect $gg $hv (S 6) $script:hoverBrush
     }
   }
 
@@ -584,6 +616,18 @@ function Invoke-OneCapture {
   # Force the handle into existence so the probe can exclude it.
   $script:overlayHwnd = $form.Handle
 
+  # The chrome is authored in logical pixels; read the physical factor off the
+  # overlay's own device context (WinForms' DeviceDpi reports 96 here under
+  # per-monitor v2, Graphics.DpiX is the real 144).
+  try {
+    $probe = [System.Drawing.Graphics]::FromHwnd($script:overlayHwnd)
+    $factor = [double]$probe.DpiX / 96.0
+    $probe.Dispose()
+    Set-UiScale $factor
+  } catch {
+    Set-UiScale 1
+  }
+
   # Rebuild the target list per capture: windows open and close between clicks.
   # EnumWindows returns them topmost-first (z-order); after filtering shell / tool
   # / transparent / title-less windows, the first entry containing the cursor wins.
@@ -596,12 +640,25 @@ function Invoke-OneCapture {
     $gg.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
     $gg.TextRenderingHint = [System.Drawing.Text.TextRenderingHint]::ClearTypeGridFit
 
-    # No dimming: the Doubao overlay leaves the desktop at full brightness and
-    # lets the chrome mark the region, so the frame is simply blitted back.
+    # Blit the frozen desktop, then knock back everything outside the region the
+    # way the Doubao tool does. Four fills instead of an even-odd clip: it is
+    # one GDI call each and stays cheap on a 4480x1600 surface.
     $gg.DrawImageUnscaled($script:bmp, 0, 0)
 
     $sel = $script:sel
+    $vw = $script:vs.Width
+    $vh = $script:vs.Height
+
     if ($sel.Width -gt 1 -and $sel.Height -gt 1) {
+      $top = [Math]::Max(0, $sel.Y)
+      $bottom = [Math]::Min($vh, $sel.Y + $sel.Height)
+      $left = [Math]::Max(0, $sel.X)
+      $right = [Math]::Min($vw, $sel.X + $sel.Width)
+      $gg.FillRectangle($script:dimBrush, 0, 0, $vw, $top)
+      $gg.FillRectangle($script:dimBrush, 0, $bottom, $vw, ($vh - $bottom))
+      $gg.FillRectangle($script:dimBrush, 0, $top, $left, ($bottom - $top))
+      $gg.FillRectangle($script:dimBrush, $right, $top, ($vw - $right), ($bottom - $top))
+
       # The half-pixel offset keeps a 1px dash crisp instead of blurred across
       # two rows of pixels.
       $gg.DrawRectangle($script:accentPen, ($sel.X - 0.5), ($sel.Y - 0.5), ($sel.Width + 1), ($sel.Height + 1))
@@ -615,8 +672,8 @@ function Invoke-OneCapture {
       return
     }
 
-    # Nothing is drawn outside a selection: no hint card, no dimming. The
-    # desktop simply stays as it was until the pointer marks a region.
+    # No region yet: the whole desktop sits under the dim until a drag starts.
+    $gg.FillRectangle($script:dimBrush, 0, 0, $vw, $vh)
   })
 
   $form.Add_MouseDown({

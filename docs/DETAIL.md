@@ -1,6 +1,6 @@
 # Screenshot to chat
 
-Adds a **Screenshot** button to the conversation composer's tool row. Clicking it switches the desktop straight into selection mode — no dimming, the screen keeps its brightness — then drag to select a region. The selection stays editable: move it, drag its handles to resize it, then confirm. The result is saved as a PNG, copied to the clipboard, and inserted into the current draft as an image attachment, ready to send together with your message.
+Adds a **Screenshot** button to the conversation composer's tool row. Clicking it puts the desktop into selection mode — everything outside the region is dimmed by half while the selection keeps its brightness — then drag to select a region. The selection stays editable: move it, drag its handles to resize it, then confirm. The result is saved as a PNG, copied to the clipboard, and inserted into the current draft as an image attachment, ready to send together with your message.
 
 The chrome follows the Doubao capture tool: a thin dark dashed outline, eight white round handles, a white rounded size chip just outside the top-left corner (`W * H`), and a white rounded action bar under the selection with a gradient primary pill.
 
