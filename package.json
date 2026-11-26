@@ -5,6 +5,9 @@
   "description": "在对话输入框添加截屏按钮，框选屏幕后作为图片附件插入 Draft。 Windows only.",
   "keywords": [
     "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
     "plugin",
     "screenshot",
     "capture",
