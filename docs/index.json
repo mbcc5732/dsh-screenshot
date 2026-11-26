@@ -53,6 +53,9 @@
         "category": "tools",
         "keywords": [
           "dsh",
+          "dsh-plugin",
+          "deepseek-harness",
+          "cordis",
           "plugin",
           "screenshot",
           "capture",
@@ -67,11 +70,11 @@
       "versions": [
         {
           "version": "1.0.0",
-          "publishTimestamp": 1795684863,
+          "publishTimestamp": 1795685202,
           "source": {
             "type": "git",
             "url": "https://github.com/mbcc5732/dsh-screenshot",
-            "commit": "b88e5f1f296f36bc52b91a361ba51f5e08798882"
+            "commit": "38c901f8a495d5972000fde3cf4e85dc53fc117f"
           }
         }
       ]
