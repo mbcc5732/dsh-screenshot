@@ -2,7 +2,7 @@
   "name": "@local/dsh-screenshot",
   "version": "1.1.0",
   "type": "module",
-  "description": "在对话输入框添加截屏按钮，框选屏幕后作为图片附件插入 Draft。 Windows only.",
+  "description": "输入框截屏入口：工具栏按钮与「+」菜单两种位置可切换，框选屏幕后作为图片附件插入 Draft。 Windows only.",
   "keywords": [
     "dsh",
     "dsh-plugin",

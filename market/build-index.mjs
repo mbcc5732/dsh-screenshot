@@ -129,8 +129,8 @@ const index = {
       name: pkg.name,
       title: { en: 'Screenshot to chat', zh: '对话截屏' },
       description: {
-        en: 'Adds a Screenshot button to the composer: drag a region (Doubao-style chrome), adjust it, and the PNG lands in the draft as an attachment. Windows only.',
-        zh: '在输入框工具栏加一个截屏按钮：拖出选区（豆包同款界面）、可微调，确认后 PNG 作为附件插入当前草稿。仅 Windows。',
+        en: 'Screenshot entry for the composer, in the tool row and the “+” menu (both switchable): drag a region (Doubao-style chrome), adjust it, and the PNG lands in the draft as an attachment. Windows only.',
+        zh: '输入框截屏入口，工具栏按钮与「+」菜单两种位置可切换：拖出选区（豆包同款界面）、可微调，确认后 PNG 作为附件插入当前草稿。仅 Windows。',
       },
       icon,
       author: pkg.author,
