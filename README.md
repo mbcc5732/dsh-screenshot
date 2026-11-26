@@ -4,6 +4,8 @@ Adds a **Screenshot** button to the conversation composer. Click it, drag a regi
 
 **Windows only.** The overlay is a Windows PowerShell + WinForms window; other platforms are refused explicitly (HTTP 501) instead of failing silently.
 
+![selection UI](docs/preview.png)
+
 ## Usage
 
 1. Click **Screenshot** in the composer tool row.
