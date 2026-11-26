@@ -82,12 +82,14 @@ window.__ModuleLoader__.load({
         },
           h('svg', {
             viewBox: '0 0 24 24', width: 18, height: 18,
-            fill: 'none', stroke: 'currentColor', 'stroke-width': 1.8,
+            fill: 'none', stroke: 'currentColor', 'stroke-width': 2,
             'stroke-linecap': 'round', 'stroke-linejoin': 'round',
             'aria-hidden': true,
           },
-            h('path', { d: 'M4 8h4l2-2h4l2 2h4v11H4z' }),
-            h('circle', { cx: 12, cy: 13, r: 3.4 }),
+            // Camera: rounded body, a viewfinder hump on the top edge, thick lens
+            // ring - one path so the hump merges into the outline.
+            h('path', { d: 'M6.1 8.5H9Q12 5.1 15 8.5H17.9A2.5 2.5 0 0 1 20.4 11V17.9A2.5 2.5 0 0 1 17.9 20.4H6.1A2.5 2.5 0 0 1 3.6 17.9V11A2.5 2.5 0 0 1 6.1 8.5Z' }),
+            h('circle', { cx: 12, cy: 14.3, r: 3.5 }),
           )
         ),
       )

@@ -44,7 +44,7 @@
         "en": "Adds a Screenshot button to the composer: drag a region (Doubao-style chrome), adjust it, and the PNG lands in the draft as an attachment. Windows only.",
         "zh": "在输入框工具栏加一个截屏按钮：拖出选区（豆包同款界面）、可微调，确认后 PNG 作为附件插入当前草稿。仅 Windows。"
       },
-      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNiAzNiIgd2lkdGg9IjM2IiBoZWlnaHQ9IjM2Ij4KICA8cGF0aCBkPSJNNiAxMWg2bDItM2g4bDIgM2g2djE4SDZ6IiBmaWxsPSJub25lIiBzdHJva2U9IiMzYjdkZDgiIHN0cm9rZS13aWR0aD0iMi40IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPGNpcmNsZSBjeD0iMTgiIGN5PSIyMCIgcj0iNS4yIiBmaWxsPSJub25lIiBzdHJva2U9IiMzYjdkZDgiIHN0cm9rZS13aWR0aD0iMi40Ii8+CiAgPGNpcmNsZSBjeD0iMTgiIGN5PSIyMCIgcj0iMS42IiBmaWxsPSIjM2I3ZGQ4Ii8+Cjwvc3ZnPgo=",
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNiAzNiIgd2lkdGg9IjM2IiBoZWlnaHQ9IjM2Ij4KICA8cGF0aCBkPSJNOS4xNSAxMi43NUgxMy41UTE4IDcuNjUgMjIuNSAxMi43NUgyNi44NUEzLjc1IDMuNzUgMCAwIDEgMzAuNiAxNi41VjI2Ljg1QTMuNzUgMy43NSAwIDAgMSAyNi44NSAzMC42SDkuMTVBMy43NSAzLjc1IDAgMCAxIDUuNCAyNi44NVYxNi41QTMuNzUgMy43NSAwIDAgMSA5LjE1IDEyLjc1WiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM2I3ZGQ4IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxjaXJjbGUgY3g9IjE4IiBjeT0iMjEuNiIgcj0iNS4yNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM2I3ZGQ4IiBzdHJva2Utd2lkdGg9IjMiLz4KPC9zdmc+DQo=",
       "author": "34394",
       "repository": {
         "url": "https://github.com/mbcc5732/dsh-screenshot"
@@ -70,11 +70,11 @@
       "versions": [
         {
           "version": "1.0.0",
-          "publishTimestamp": 1795695705,
+          "publishTimestamp": 1795696070,
           "source": {
             "type": "git",
             "url": "https://github.com/mbcc5732/dsh-screenshot",
-            "commit": "e9397bf001ec00a3e7debdee5b5a9b22bbdd696d"
+            "commit": "a7a5811932d6b97bcf3ee01f6bf0ebff88aede23"
           }
         }
       ]
