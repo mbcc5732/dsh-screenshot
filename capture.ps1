@@ -640,24 +640,22 @@ function Invoke-OneCapture {
     $gg.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
     $gg.TextRenderingHint = [System.Drawing.Text.TextRenderingHint]::ClearTypeGridFit
 
-    # Blit the frozen desktop, then knock back everything outside the region the
-    # way the Doubao tool does. Four fills instead of an even-odd clip: it is
-    # one GDI call each and stays cheap on a 4480x1600 surface.
+    # Blit the frozen desktop, knock the whole surface back, then restore the
+    # selected region from the same bitmap. One fill plus a clipped blit: laying
+    # four rectangles around the hole instead leaves a faint seam row on the
+    # shared edges, which reads as two white lines across the screen.
     $gg.DrawImageUnscaled($script:bmp, 0, 0)
 
     $sel = $script:sel
     $vw = $script:vs.Width
     $vh = $script:vs.Height
 
+    $gg.FillRectangle($script:dimBrush, 0, 0, $vw, $vh)
+
     if ($sel.Width -gt 1 -and $sel.Height -gt 1) {
-      $top = [Math]::Max(0, $sel.Y)
-      $bottom = [Math]::Min($vh, $sel.Y + $sel.Height)
-      $left = [Math]::Max(0, $sel.X)
-      $right = [Math]::Min($vw, $sel.X + $sel.Width)
-      $gg.FillRectangle($script:dimBrush, 0, 0, $vw, $top)
-      $gg.FillRectangle($script:dimBrush, 0, $bottom, $vw, ($vh - $bottom))
-      $gg.FillRectangle($script:dimBrush, 0, $top, $left, ($bottom - $top))
-      $gg.FillRectangle($script:dimBrush, $right, $top, ($vw - $right), ($bottom - $top))
+      $gg.SetClip($sel)
+      $gg.DrawImageUnscaled($script:bmp, 0, 0)
+      $gg.ResetClip()
 
       # The half-pixel offset keeps a 1px dash crisp instead of blurred across
       # two rows of pixels.
@@ -671,9 +669,6 @@ function Invoke-OneCapture {
       }
       return
     }
-
-    # No region yet: the whole desktop sits under the dim until a drag starts.
-    $gg.FillRectangle($script:dimBrush, 0, 0, $vw, $vh)
   })
 
   $form.Add_MouseDown({
