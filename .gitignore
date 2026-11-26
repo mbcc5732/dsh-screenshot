@@ -1,0 +1,9 @@
+# Editor / OS noise
+Thumbs.db
+desktop.ini
+*.bak
+
+# Real index output: generated per publish by market/build-index.mjs
+market/index.json
+
+node_modules/

@@ -1,0 +1,49 @@
+# DSH 对话截屏
+
+在对话输入框的工具栏加一个「截屏」按钮：点击后拖出选区（界面与豆包截图工具一致），确认后 PNG 作为图片附件插入当前草稿。
+
+**仅 Windows**：遮罩层是 Windows PowerShell + WinForms 窗口，其他平台会被显式拒绝（HTTP 501），不会悄悄失败。
+
+## 用法
+
+1. 点输入框工具栏的「截屏」按钮。
+2. 拖框选区；只点一下某个窗口则选中该窗口，悬停时先用虚线框预览。
+3. 松手后仍可编辑：框内按住拖动整体挪位，拖四角/四边白色圆手柄改大小。
+4. `Enter`、框内双击、或工具条「✓ 插入对话」确认；「复制」只进剪贴板不关闭（标签短暂显示「已复制」）；「取消」/`Esc` 放弃。
+5. 图片出现在输入框，写问题后正常发送。
+
+界面：黑色细虚线选区、8 个白色圆形手柄、左上外侧白底圆角尺寸标签、选区下方白色圆角工具条（渐变主按钮）。不压暗桌面，不弹任何提示气泡。
+
+## 安装
+
+- **本地**：把本目录放进 `default-workspace/`，用 `cordis.patch.yml` 挂载即可（当前就是这种用法）。
+- **从插件市场上架/安装**：见下一节。
+
+## 上架到插件市场
+
+DSH 的插件市场是一份 **索引 JSON**（format 1），不是应用商店后台上传：把索引放到任意 HTTPS 可达地址，用户在插件市场里添加该地址作为「索引源」，就能搜到并安装本插件。
+
+1. 推到公开仓库（GitHub 等），确保仓库里包含本目录全部文件。
+2. 生成索引：
+   ```
+   node market/build-index.mjs --repo https://github.com/<you>/dsh-screenshot
+   ```
+   有 git 检出时 `commit`、`publishTimestamp`、`origin` 都会自动读取；也可显式传 `--commit` / `--timestamp` / `--path`（子目录）。
+   npm 源用 `--npm --registry https://registry.npmjs.org`（需要先把包真的发到 npm，且把 `name` 改成你自己的 scope）。
+3. 得到的 `market/index.json` 传到任意 HTTPS 静态地址（GitHub Pages、对象存储、自己域名都行）。
+4. 在 DSH 插件市场里添加这个 URL 作为索引源，条目即可安装，安装 spec 形如
+   `git+https://github.com/<you>/dsh-screenshot.git#<40位commit>`。
+
+`market/example.index.json` 是用示例仓库生成的样例，结构可通过 DSH 自带校验器（`@deepseek-ai/dsh-plugin-market-index` 的 `parseMarketIndex`）。
+
+进官方索引需要 DeepSeek 团队收录，本仓库没有自助入口。
+
+## 权限与实现说明
+
+- 启动一个常驻 `powershell.exe`（`capture.ps1 -Serve`）做预热，点击延迟约 130–220ms；进程随宿主退出，宿主异常消失时遮罩 1 秒内自关。
+- 全屏抓取当前桌面（per-monitor DPI v2，缩放屏按物理像素），选区裁剪后写 PNG 到 `%TEMP%\dsh-screenshot-tool`，字节读回后立即删除；剪贴板另留一份。
+- 上传的是你自己圈定的那块像素，不会有其它窗口内容进入附件。
+
+## 文档
+
+- `docs/DETAIL.zh.md` / `docs/DETAIL.md`：逐项行为与限制说明。

@@ -1,0 +1,13 @@
+{
+  "meta": {
+    "title": "Screenshot to chat",
+    "description": "Adds a screenshot button to the composer: select a screen region and insert it as an image attachment. Windows only.",
+    "detail": "docs/DETAIL.md"
+  },
+  "button": "Screenshot",
+  "hintSelect": "Drag to select a screen region, Esc to cancel",
+  "done": "Screenshot added",
+  "failed": "Screenshot failed",
+  "cancelled": "Screenshot cancelled",
+  "unsupported": "Screenshot is available on Windows only"
+}
