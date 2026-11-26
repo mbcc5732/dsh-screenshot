@@ -524,7 +524,6 @@ function Save-Crop {
     $file = Join-Path $OutDir ('shot-' + $stamp + '.png')
     $crop.Save($file, [System.Drawing.Imaging.ImageFormat]::Png)
     try { [System.Windows.Forms.Clipboard]::SetImage($crop) } catch { }
-    [System.Media.SystemSounds]::Asterisk.Play()
     return $file
   } finally {
     $crop.Dispose()
@@ -691,7 +690,6 @@ function Invoke-OneCapture {
         # sends it to the conversation.
         Copy-SelectionToClipboard
         $script:copiedAt = [Environment]::TickCount
-        [System.Media.SystemSounds]::Asterisk.Play()
         $s.Invalidate()
         return
       }
