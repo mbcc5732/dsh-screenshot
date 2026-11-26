@@ -76,7 +76,6 @@ $script:labelInsert = '插入对话'
 # than points so the chrome keeps its measured size at any display scaling.
 $script:chipFont = New-Object System.Drawing.Font('Microsoft YaHei UI', 15, [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Pixel)
 $script:labelFont = New-Object System.Drawing.Font('Microsoft YaHei UI', 14, [System.Drawing.FontStyle]::Regular, [System.Drawing.GraphicsUnit]::Pixel)
-$script:labelBoldFont = New-Object System.Drawing.Font('Microsoft YaHei UI', 14, [System.Drawing.FontStyle]::Bold, [System.Drawing.GraphicsUnit]::Pixel)
 
 # Palette: near-black ink on white cards, hairline #E5E6EB boundaries.
 $script:inkColor = [System.Drawing.Color]::FromArgb(255, 31, 35, 41)
@@ -87,7 +86,6 @@ $script:hoverBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]
 $script:chipBorderPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 229, 230, 235), 1)
 $script:dividerPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 221, 224, 230), 1)
 $script:iconPen = New-Object System.Drawing.Pen($script:inkColor, 1.4)
-$script:iconWhitePen = New-Object System.Drawing.Pen([System.Drawing.Color]::White, 1.6)
 
 # Selection outline: thin dark dashes around the region. The frame behind it is
 # blitted untouched - the Doubao overlay does not dim the desktop.
@@ -275,11 +273,11 @@ function Get-ToolbarLayout {
   $mg = $script:measureG
   $twCopy = [int][Math]::Ceiling($mg.MeasureString($script:labelCopy, $script:labelFont).Width)
   $twCancel = [int][Math]::Ceiling($mg.MeasureString($script:labelCancel, $script:labelFont).Width)
-  $twInsert = [int][Math]::Ceiling($mg.MeasureString($script:labelInsert, $script:labelBoldFont).Width)
+  $twInsert = [int][Math]::Ceiling($mg.MeasureString($script:labelInsert, $script:labelFont).Width)
 
   $wCopy = $padItem * 2 + $iconSize + $iconGap + $twCopy
   $wCancel = $padItem * 2 + $iconSize + $iconGap + $twCancel
-  $wInsert = 15 * 2 + $iconSize + $iconGap + $twInsert
+  $wInsert = $padItem * 2 + $iconSize + $iconGap + $twInsert
   $wDiv = 1 + $divPad * 2
 
   $barW = $padOuter * 2 + $wCopy + $wCancel + $wDiv + $wInsert
@@ -297,7 +295,7 @@ function Get-ToolbarLayout {
   $cx += $wCancel + $divPad
   $divider = New-Object System.Drawing.Rectangle($cx, ($y + 10), 1, ($barH - 20))
   $cx += 1 + $divPad
-  $insert = New-Object System.Drawing.Rectangle($cx, ($y + 5), $wInsert, ($barH - 10))
+  $insert = New-Object System.Drawing.Rectangle($cx, $y, $wInsert, $barH)
 
   return @{
     bar     = (New-Object System.Drawing.Rectangle($x, $y, $barW, $barH))
@@ -452,7 +450,7 @@ function Draw-Toolbar {
   $layout = Get-ToolbarLayout $r
   Draw-Card $gg $layout['bar'] 10
 
-  foreach ($key in @('copy', 'cancel')) {
+  foreach ($key in @('copy', 'cancel', 'insert')) {
     if ($script:hoverButton -eq $key) {
       $it = $layout[$key]
       $hv = New-Object System.Drawing.Rectangle(($it.X + 2), ($it.Y + 5), ($it.Width - 4), ($it.Height - 10))
@@ -471,15 +469,7 @@ function Draw-Toolbar {
   $dv = $layout['divider']
   $gg.DrawLine($script:dividerPen, ($dv.X + 0.5), $dv.Y, ($dv.X + 0.5), ($dv.Y + $dv.Height))
 
-  # Primary action: solid gradient pill, like the Doubao "问问豆包" button.
-  $pr = $layout['insert']
-  $grad = New-Object System.Drawing.Drawing2D.LinearGradientBrush(
-    $pr,
-    ([System.Drawing.Color]::FromArgb(255, 78, 107, 255)),
-    ([System.Drawing.Color]::FromArgb(255, 139, 92, 255)),
-    [single]0)
-  try { Fill-RoundedRect $gg $pr ($pr.Height / 2) $grad } finally { $grad.Dispose() }
-  Draw-ItemContent $gg $pr $script:labelInsert 'check' $script:iconWhitePen $script:whiteBrush $script:labelBoldFont
+  Draw-ItemContent $gg $layout['insert'] $script:labelInsert 'check' $script:iconPen $script:inkBrush $script:labelFont
 }
 
 function Copy-SelectionToClipboard {
